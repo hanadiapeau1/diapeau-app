@@ -46,7 +46,7 @@ async function load(){
   const {data,error}=await sb.from('members').select('role,clinic_id,clinics(name)').limit(1);
   if(error){S.err=msg(error);return render()}
   if(!data.length){S.clinic=null;return render()}
-  S.clinic={id:data[0].clinic_id,name:data[0].clinics.name};S.role=data[0].role;
+  S.clinic={id:data[0].clinic_id,name:(data[0].clinics&&data[0].clinics.name)||'הקליניקה שלי'};S.role=data[0].role;
   await Promise.all([loadClients(),loadCases()]);render()
 }
 async function loadClients(){const {data,error}=await sb.from('clients').select('*').order('created_at',{ascending:false});if(error)S.err=msg(error);S.clients=data||[]}
