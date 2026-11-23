@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5F7569">
+<title>Diapeau Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#EEF1EE;--card:#FFFFFF;--ink:#26302C;--mute:#75807B;--line:#E1E6E2;--sd:#5F7569;--sd2:#4A5E52;--onsd:#FFFFFF;--mist:#E3EBE6;--warn:#A5744F;--wbg:#F6EDE4;--danger:#B5605A;--shadow:0 1px 2px rgba(38,48,44,.06),0 6px 18px rgba(38,48,44,.05)}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#141918;--card:#1E2423;--ink:#E8ECE9;--mute:#9AA5A0;--line:#303836;--sd:#A9BFB2;--sd2:#C4D6CA;--onsd:#14201A;--mist:#2A3532;--warn:#D1A988;--wbg:#3A312B;--danger:#E08B84;--shadow:none}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 Heebo,system-ui,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+svg{flex:none}
+#app{max-width:720px;margin:0 auto;min-height:100vh;padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;min-height:56px}
+.top .t{font-weight:500;font-size:17px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logo{font-weight:300;letter-spacing:.18em;font-size:19px}.logo b{font-weight:600}
+.iconbtn{width:42px;height:42px;border-radius:12px;border:0;background:var(--mist);color:var(--sd2);display:inline-flex;align-items:center;justify-content:center}
+.iconbtn.plain{background:none}
+.page{padding:14px 14px 0}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+h1{font-size:22px;font-weight:500;margin:4px 0 2px}
+h2{font-size:16px;font-weight:500;margin:0 0 10px}
+.sub{color:var(--mute);font-size:13px}
+label.l{display:block;font-size:13px;color:var(--mute);margin:12px 0 4px}
+.in,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-height:44px;outline:none}
+.in:focus,select:focus,textarea:focus{border-color:var(--sd)}
+textarea{resize:vertical}
+.btn{background:var(--sd);color:var(--onsd);border:0;border-radius:12px;padding:11px 18px;min-height:44px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.sec{background:var(--mist);color:var(--sd2)}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--sd2)}
+.btn.dng{background:none;border:1px solid var(--danger);color:var(--danger)}
+.btn.sm{min-height:38px;padding:7px 14px;font-size:14px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.5}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row.sp{justify-content:space-between}
+.grow{flex:1}
+.alert{background:var(--wbg);border-inline-start:3px solid var(--warn);border-radius:12px;padding:9px 12px;margin:8px 0;font-size:14px;color:var(--ink)}
+.av{width:42px;height:42px;border-radius:50%;background:var(--mist);color:var(--sd2);display:inline-flex;align-items:center;justify-content:center;font-weight:500;font-size:15px;flex:none}
+.av.lg{width:60px;height:60px;font-size:21px}
+.li{display:flex;align-items:center;gap:12px;width:100%;text-align:start;border:0;background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow)}
+.li .mid{flex:1;min-width:0}
+.li .nm{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .sb{color:var(--mute);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:12px;color:var(--mute)}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;background:var(--mist);color:var(--sd2);white-space:nowrap}
+.pill.waiting_instructor{background:var(--wbg);color:var(--warn)}
+.pill.closed{background:var(--bg);color:var(--mute);border:1px solid var(--line)}
+.pill.warn{background:var(--wbg);color:var(--warn)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--card);border-radius:16px;padding:14px;border:0;text-align:start;box-shadow:var(--shadow)}
+.tile b{display:block;font-size:26px;font-weight:500;line-height:1.1;color:var(--sd2)}
+.tile span{color:var(--mute);font-size:13px}
+.search{position:relative;margin-bottom:10px}
+.search .in{padding-inline-start:40px}
+.search svg{position:absolute;inset-inline-start:12px;top:12px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
+.chk{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;background:var(--bg);border:1px solid var(--line);border-radius:999px;font-size:14px;margin:0;color:var(--ink);cursor:pointer}
+.chk input{margin:0;accent-color:var(--sd)}
+.chk:has(input:checked),.chk.on{background:var(--mist);border-color:var(--sd);color:var(--sd2)}
+.fl{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:4px}
+.fl .chk{white-space:nowrap}
+.nav{position:fixed;bottom:0;inset-inline:0;max-width:720px;margin:auto;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:6}
+.nav button{flex:1;background:none;border:0;padding:6px 4px;border-radius:12px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px}
+.nav button.on{color:var(--sd2);background:var(--mist);font-weight:500}
+.toast{position:fixed;top:14px;inset-inline:14px;margin:auto;max-width:420px;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:14px;z-index:50;text-align:center;opacity:0;transform:translateY(-12px);pointer-events:none;transition:.2s}
+.toast.show{opacity:1;transform:none}
+.toast.err{background:var(--danger);color:#fff}
+.ov{position:fixed;inset:0;background:rgba(20,25,24,.5);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto}
+@media(min-width:700px){.ov{align-items:center}.sheet{border-radius:22px}}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px}
+.lb img{max-width:100%;max-height:100%;border-radius:12px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ps{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--bg)}
+.ps img{width:100%;height:100%;object-fit:cover;display:block}
+.ps .tag{position:absolute;bottom:6px;inset-inline-start:6px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:2px 9px;border-radius:999px}
+.ps .x{position:absolute;top:6px;inset-inline-end:6px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center}
+.ps.add{border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--sd2);cursor:pointer;font-size:14px}
+.chat{display:flex;flex-direction:column;gap:6px}
+.bb{max-width:82%;padding:8px 12px;border-radius:16px;white-space:pre-wrap;word-break:break-word;background:var(--bg)}
+.bb.me{background:var(--mist);align-self:flex-start;border-end-start-radius:4px}
+.bb.oth{align-self:flex-end;border-end-end-radius:4px}
+.bb.sys{align-self:center;background:var(--wbg);color:var(--warn);font-size:13px;text-align:center;max-width:92%}
+.bb small{display:block;color:var(--mute);font-size:11px;margin-top:2px}
+.cmp{position:fixed;bottom:0;inset-inline:0;max-width:720px;margin:auto;background:var(--card);border-top:1px solid var(--line);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:flex-end;z-index:6}
+.cmp textarea{min-height:44px;max-height:120px;resize:none;margin:0;border-radius:22px;padding:10px 16px}
+.cmp .btn{border-radius:50%;width:44px;height:44px;padding:0}
+.sbar{position:fixed;bottom:0;inset-inline:0;max-width:720px;margin:auto;background:var(--card);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));z-index:6}
+.prog{height:6px;border-radius:999px;background:var(--line);overflow:hidden;margin:8px 0 2px}
+.prog i{display:block;height:100%;background:var(--sd)}
+.splash{display:flex;align-items:center;justify-content:center;min-height:70vh;color:var(--mute)}
+.center{max-width:400px;margin:7vh auto 0;padding:0 14px}
+.empty{text-align:center;color:var(--mute);padding:26px 10px}
+.steps{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto}.stp{flex:1;min-width:0;text-align:center;padding:8px 4px;border-radius:12px;background:var(--card);font-size:12px;color:var(--mute);box-shadow:var(--shadow)}.stp.done{color:var(--sd2);background:var(--mist);font-weight:500}.stp.soon{opacity:.55}
+.acc{padding:0}.acc summary{list-style:none;padding:15px 16px;font-weight:500;font-size:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;min-height:52px}.acc summary::-webkit-details-marker{display:none}.acc summary::after{content:'▾';color:var(--mute)}.acc[open] summary::after{content:'▴'}.acc .ab{padding:0 16px 16px}
+details.alert summary{cursor:pointer;list-style:none;font-weight:500}details.alert summary::-webkit-details-marker{display:none}
+.sec{margin:16px 2px 8px;font-size:14px;color:var(--mute);display:flex;justify-content:space-between;align-items:center}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+<div id="modal"></div>
+<div id="lb"></div>
+<script>
+const SB_URL='https://ipigalvzphibktlvhpcj.supabase.co';
+const SB_KEY='sb_publishable_0a1V0SR38S_ZnuyLBoxNhQ_hYftLl_V';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const S={loading:true,user:null,clinic:null,role:null,nav:'home',clients:[],cases:[],items:[],sub:'',cv:'goal',open:{q1:true},itemsErr:'',qmap:{},cur:null,msgs:[],photos:[],cl:null,sc:'',sk:'',sf:'all',draft:'',mode:'login',modal:null,lb:null,up:'',scroll:false,errBox:''};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MAP=[[/Invalid login credentials/i,'אימייל או סיסמה שגויים.'],[/already registered/i,'האימייל כבר רשום. נסי להתחבר.'],[/Password should be at least/i,'הסיסמה קצרה מדי. מומלץ 8 תווים ומעלה.'],[/rate limit/i,'יותר מדי ניסיונות. נסי שוב בעוד כמה דקות.'],[/permission denied/i,'אין הרשאה במסד הנתונים. ייתכן שחסרה הרצת הרשאות.'],[/Failed to fetch|NetworkError/i,'אין חיבור לאינטרנט או לשרת.']];
+function msg(e){const m=e?(e.message||String(e)):'';for(const [r,t] of MAP)if(r.test(m))return t;return m}
+let tt;function toast(t,k){const e=$('toast');e.className='toast show '+(k||'');e.textContent=t;clearTimeout(tt);tt=setTimeout(()=>{e.className='toast'},k==='err'?4200:2200)}
+const VN={front:'חזית',right:'צד ימין',left:'צד שמאל',closeup:'קלוז-אפ'};
+const ST={open:'פתוח',waiting_instructor:'ממתין למדריכה',answered:'נענה',closed:'סגור'};
+const ROLE={owner:'בעלת הקליניקה',therapist:'מטפלת',staff:'צוות'};
+const I={
+home:'<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+cases:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.3A8 8 0 1 1 21 12z"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 5a3.5 3.5 0 0 1 0 6.5M18 14.8c2 .6 3.2 2.3 3.5 5.2"/>',
+drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+settings:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+back:'<path d="M9 5l7 7-7 7"/>',
+camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+send:'<path d="M3 11l18-8-8 18-2-8z"/>',
+search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/>',
+edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+check:'<path d="M5 12l5 5 9-10"/>',
+clinic:'<path d="M4 21V8l8-5 8 5v13M9 21v-6h6v6"/>',
+flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>'};
+const ic=(n,s)=>`<svg width="${s||22}" height="${s||22}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+function ini(n){return (n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('')}
+function ago(d){const m=Math.floor((Date.now()-new Date(d))/60000);if(m<1)return'עכשיו';if(m<60)return'לפני '+m+' דק׳';const h=Math.floor(m/60);if(h<24)return'לפני '+h+' שע׳';const dd=Math.floor(h/24);if(dd===1)return'אתמול';if(dd<7)return'לפני '+dd+' ימים';return new Date(d).toLocaleDateString('he-IL')}
+function hm(d){return new Date(d).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}
+function ageOf(by){return by?new Date().getFullYear()-by:null}
+const pill=s=>`<span class="pill ${s}">${ST[s]||esc(s)}</span>`;
+
+/* ---------- options for questionnaire ---------- */
+const OPT=(arr,sel)=>arr.map(([v,l])=>`<option value="${v}"${sel===v?' selected':''}>${l}</option>`).join('');
+const CHK=(g,arr,sel)=>`<div class="chips">${arr.map(([v,l])=>`<label class="chk"><input type="checkbox" name="${g}" value="${v}"${(sel||[]).includes(v)?' checked':''}>${l}</label>`).join('')}</div>`;
+const L_FITZ=[['','בחרי'],['1','1 · בהיר מאוד, נשרף תמיד'],['2','2 · בהיר, נשרף בקלות'],['3','3 · בינוני, לפעמים נשרף'],['4','4 · זית, נשרף מעט'],['5','5 · חום, כמעט לא נשרף'],['6','6 · כהה מאוד']];
+const L_SKIN=[['','בחרי'],['normal','רגיל'],['dry','יבש'],['oily','שמן'],['combo','מעורב'],['sensitive','רגיש']];
+const L_PREG=[['none','לא'],['pregnant','בהיריון'],['nursing','מניקה'],['planning','מתכננת היריון']];
+const L_COND=[['diabetes','סוכרת'],['thyroid','בלוטת התריס'],['pcos','שחלות פוליציסטיות'],['autoimmune','מחלה אוטואימונית'],['eczema','אקזמה / פסוריאזיס'],['herpes','הרפס חוזר'],['keloid','נטייה לצלקות מעובות'],['blood','הפרעת קרישה'],['cardio','לב / לחץ דם'],['cancer','מחלה ממאירה'],['none','ללא מחלות רקע']];
+const L_MEDS=[['isotretinoin','איזוטרטינואין (ב-6 חודשים האחרונים)'],['antibiotics','אנטיביוטיקה'],['anticoag','מדללי דם'],['hormonal','גלולות / טיפול הורמונלי'],['photo','תרופות המגבירות רגישות לשמש'],['immuno','סטרואידים / מדכאי חיסון'],['none','ללא תרופות קבועות']];
+const L_ACT=[['retinoid','רטינואידים / רטינול'],['aha','חומצות AHA'],['bha','חומצה סליצילית BHA'],['vitc','ויטמין C'],['bpo','בנזואיל פרוקסיד'],['azelaic','חומצה אזלאית'],['none','ללא אקטיבים']];
+const L_SENS=[['burning','צריבה'],['stinging','עקצוץ'],['tight','מתיחות / יובש'],['itch','גרד'],['redness','אדמומיות מתמשכת'],['peeling','קילוף'],['none','ללא תחושות חריגות']];
+const L_PREV=[['laser','לייזר'],['peel','פילינג'],['filler','בוטוקס / חומרי מילוי'],['needling','מיקרונידלינג'],['none','ללא טיפולים']];
+const L_MOIST=[['','בחרי'],['none','ללא קרם לחות'],['light','קליל / ג׳ל'],['rich','עשיר']];
+const L_SPF=[['','בחרי'],['daily','כל יום'],['sometimes','לפעמים'],['never','כמעט אף פעם']];
+const L_REASON=['היריון / הנקה','סימן חריג','בקשה לעין אנושית','מעט מקרים דומים','אחר'];
+function flags(d){const f=[];if(!d){f.push('השאלון עדיין לא מולא. מומלץ להשלים לפני ניתוח.');return f}
+  if(d.preg&&d.preg!=='none')f.push('היריון / הנקה / תכנון היריון: נדרשת בדיקה אנושית, מומלץ לשקול הפניה למדריכה.');
+  if((d.meds||[]).includes('isotretinoin'))f.push('איזוטרטינואין: נדרשת זהירות בטיפולים חודרניים, מומלץ לשקול הפניה למדריכה.');
+  if((d.meds||[]).includes('photo'))f.push('תרופות המגבירות רגישות לשמש.');
+  if((d.meds||[]).includes('anticoag'))f.push('מדללי דם.');
+  if((d.cond||[]).includes('herpes'))f.push('היסטוריה של הרפס: לבדוק לפני טיפולים באזור הפה.');
+  if((d.cond||[]).includes('keloid'))f.push('נטייה לצלקות מעובות.');
+  if((d.cond||[]).includes('cancer'))f.push('מחלה ממאירה: נדרשת בדיקה אנושית.');
+  if(['4','5','6'].includes(d.fitz))f.push('סוג עור 4 ומעלה: זהירות מפיגמנטציה לאחר דלקת.');
+  return f}
+function qpct(d){if(!d)return 0;const k=[d.fitz,d.skin,(d.cond||[]).length,(d.meds||[]).length,(d.actives||[]).length,d.moist,d.spf,(d.sens||[]).length,(d.prev||[]).length,d.goal,d.allergy];return Math.round(k.filter(Boolean).length/k.length*100)}
+
+/* ---------- data ---------- */
+async function loadAll(){
+  const [a,b,c]=await Promise.all([sb.from('clients').select('*').order('created_at',{ascending:false}),sb.from('cases').select('*,clients(full_name)').order('created_at',{ascending:false}),sb.from('questionnaires').select('client_id,data,pregnancy_week')]);
+  const er=a.error||b.error||c.error;if(er)toast(msg(er),'err');
+  const it=await sb.from('clinic_items').select('*').order('created_at',{ascending:true});S.items=it.data||[];S.itemsErr=it.error?msg(it.error):'';
+  S.clients=a.data||[];S.cases=b.data||[];S.qmap={};(c.data||[]).forEach(x=>{S.qmap[x.client_id]=Object.assign({},x.data,{pw:x.pregnancy_week})})}
+async function load(){
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    S.user=session?session.user:null;
+    if(!S.user){S.clinic=null;S.loading=false;return render()}
+    const {data,error}=await sb.from('members').select('role,clinic_id').limit(1);
+    if(error){S.loading=false;S.errBox=msg(error);return render()}
+    if(!data||!data.length){S.clinic=null;S.loading=false;return render()}
+    let nm='הקליניקה שלי';
+    try{const r=await sb.from('clinics').select('name').eq('id',data[0].clinic_id).maybeSingle();if(r.data&&r.data.name)nm=r.data.name}catch(_){}
+    S.clinic={id:data[0].clinic_id,name:nm};S.role=data[0].role;S.errBox='';
+    await loadAll();S.loading=false;render()
+  }catch(e){S.loading=false;S.errBox='שגיאה בטעינה: '+msg(e);render()}
+}
+async function openCase(id,keep){
+  const c=S.cases.find(x=>x.id===id);if(!c)return;S.cur=c;
+  const [m,p]=await Promise.all([sb.from('case_messages').select('*').eq('case_id',id).order('created_at'),sb.from('case_photos').select('*').eq('case_id',id).order('created_at')]);
+  S.msgs=m.data||[];S.photos=p.data||[];
+  if(S.photos.length){const {data}=await sb.storage.from('case-photos').createSignedUrls(S.photos.map(x=>x.storage_path),3600);(data||[]).forEach((u,i)=>{if(S.photos[i])S.photos[i].url=u.signedUrl})}
+  if(!keep)S.draft='';
+  S.scroll=keep?false:true;render()
+}
+async function refreshMsgs(){const m=await sb.from('case_messages').select('*').eq('case_id',S.cur.id).order('created_at');S.msgs=m.data||[]}
+function go(n){S.sub='';S.nav=n;S.cur=null;S.cl=null;S.scroll=true;render()}
+function openClient(id){S.cur=null;S.cl=S.clients.find(c=>c.id===id)||null;S.scroll=true;render()}
+async function photoPaths(ids){if(!ids.length)return[];const {data}=await sb.from('case_photos').select('storage_path').in('case_id',ids);return (data||[]).map(x=>x.storage_path)}
+async function rmFiles(paths){if(paths.length)await sb.storage.from('case-photos').remove(paths)}
+async function shrink(file){
+  try{
+    const bm=await createImageBitmap(file);const M=2000;const k=Math.min(1,M/Math.max(bm.width,bm.height));
+    const cv=document.createElement('canvas');cv.width=Math.round(bm.width*k);cv.height=Math.round(bm.height*k);
+    cv.getContext('2d').drawImage(bm,0,0,cv.width,cv.height);
+    const b=await new Promise(r=>cv.toBlob(r,'image/jpeg',0.88));
+    return b&&b.size?b:file
+  }catch(_){return file}
+}
+async function uploadPhoto(f,v){
+  if(!f)return;
+  const cl=S.clients.find(c=>c.id===S.cur.client_id);
+  if(!cl||!cl.consent_photos_at){toast('אין אישור צילום ללקוחה. סמני אישור לפני העלאה.','err');return}
+  S.up=v;render();
+  try{
+    const blob=await shrink(f);
+    const ok=['image/jpeg','image/png','image/webp'];
+    if(!ok.includes(blob.type)){toast('אפשר להעלות רק JPG, PNG או WEBP.','err');S.up='';render();return}
+    if(blob.size>10*1024*1024){toast('התמונה גדולה מ-10MB.','err');S.up='';render();return}
+    const path=`${S.clinic.id}/${S.cur.id}/${Date.now()}-${v}`;
+    const up=await sb.storage.from('case-photos').upload(path,blob,{contentType:blob.type});
+    if(up.error)throw up.error;
+    const ins=await sb.from('case_photos').insert({case_id:S.cur.id,clinic_id:S.clinic.id,view:v,source:'phone',storage_path:path});
+    if(ins.error)throw ins.error;
+    S.up='';await openCase(S.cur.id,true);toast('התמונה נשמרה')
+  }catch(e){S.up='';toast(msg(e),'err');render()}
+}
+
+/* ---------- views ---------- */
+function vAuth(){const si=S.mode==='login';
+  return `<div class="center"><div class="logo" style="text-align:center;margin-bottom:6px;font-size:26px"><b>DIA</b>PEAU</div><p class="sub" style="text-align:center;margin:0 0 18px">פלטפורמה למטפלות בעור</p><div class="card" data-form><h2>${si?'כניסה':'יצירת חשבון'}</h2><label class="l">אימייל</label><input class="in" id="em" type="email" autocomplete="email" dir="ltr"><label class="l">סיסמה (לפחות 8 תווים)</label><input class="in" id="pw" type="password" autocomplete="${si?'current-password':'new-password'}" dir="ltr">${S.errBox?`<div class="alert">${esc(S.errBox)}</div>`:''}<div class="row" style="margin-top:14px"><button class="btn grow" data-enter data-a="${si?'login':'signup'}">${si?'כניסה':'יצירת חשבון'}</button></div><div style="margin-top:8px"><button class="btn ghost full" data-a="mode">${si?'אין לי חשבון עדיין':'כבר יש לי חשבון'}</button></div></div></div>`}
+function vOnb(){return `<div class="center"><div class="logo" style="text-align:center;margin-bottom:18px;font-size:26px"><b>DIA</b>PEAU</div><div class="card" data-form><h2>הקמת קליניקה</h2><p class="sub">נשלים את ההקמה פעם אחת. את תהיי בעלת הקליניקה.</p><label class="l">שם הקליניקה</label><input class="in" id="cn">${S.errBox?`<div class="alert">${esc(S.errBox)}</div>`:''}<div class="row" style="margin-top:14px"><button class="btn grow" data-enter data-a="mkclinic">יצירה</button><button class="btn ghost" data-a="logout">יציאה</button></div></div></div>`}
+function topMain(){return `<div class="top"><div class="logo"><b>DIA</b>PEAU</div><span class="sub" style="margin-inline-start:auto;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(S.clinic.name)}</span></div>`}
+function topSub(title,right){return `<div class="top"><button class="iconbtn plain" data-a="back" aria-label="חזרה">${ic('back')}</button><div class="t">${title}</div>${right||''}</div>`}
+function nav(){const t=(k,l,i)=>`<button class="${S.nav===k?'on':''}" data-a="nav" data-t="${k}">${ic(i)}<span>${l}</span></button>`;
+  return `<div class="nav">${t('home','בית','home')}${t('cases','מקרים','cases')}${t('clients','לקוחות','users')}${t('clinic','הקליניקה','clinic')}${t('settings','הגדרות','settings')}</div>`}
+function liCase(c){const nm=c.clients?c.clients.full_name:'';
+  return `<button class="li" data-a="open" data-id="${c.id}"><span class="av">${esc(ini(nm))}</span><span class="mid"><div class="nm">${c.flagged?'⚑ ':''}${esc(nm)}</div><div class="sb">${esc(c.question||'מקרה ללא שאלה')}</div></span><span class="end">${pill(c.status)}<span>${ago(c.created_at)}</span></span></button>`}
+function liClient(c){const a=ageOf(c.birth_year),q=S.qmap[c.id];
+  const qs=q?`שאלון ${qpct(q)}%`:'חסר שאלון';
+  return `<button class="li" data-a="oclient" data-id="${c.id}"><span class="av">${esc(ini(c.full_name))}</span><span class="mid"><div class="nm">${esc(c.full_name)}</div><div class="sb">${a?'גיל '+a+' · ':''}${qs}</div></span><span class="end">${c.consent_photos_at?'':'<span class="pill warn">ללא אישור צילום</span>'}</span></button>`}
+function clientList(){const q=S.sc.trim().toLowerCase();const l=S.clients.filter(c=>!q||c.full_name.toLowerCase().includes(q));
+  return l.length?l.map(liClient).join(''):`<div class="empty">${S.clients.length?'לא נמצאו לקוחות.':'עדיין אין לקוחות. לחצי על + כדי להוסיף.'}</div>`}
+function caseList(){const q=S.sk.trim().toLowerCase();
+  const l=S.cases.filter(c=>(S.sf==='all'||c.status===S.sf)&&(!q||((c.clients?c.clients.full_name:'')+' '+(c.question||'')).toLowerCase().includes(q)));
+  return l.length?l.map(liCase).join(''):`<div class="empty">${S.cases.length?'אין מקרים שמתאימים לסינון.':'עדיין אין מקרים. לחצי על + כדי לפתוח.'}</div>`}
+function checklist(){
+  const fc=S.clients[0];
+  const st=[['הגדירי מה יש בקליניקה: מכשור ומוצרים',S.items.length>0,'subitems',''],['הוסיפי לקוחה',S.clients.length>0,'newclient',''],['מלאי שאלון בריאות ורקע רפואי',Object.keys(S.qmap).length>0,fc?'oclient':'newclient',fc?fc.id:''],['פתחי מקרה והעלי תמונות',S.cases.length>0,'newcase','']];
+  if(st.every(x=>x[1]))return '';
+  return `<div class="sec"><span>להתחלה</span></div>`+st.map((x,i)=>`<button class="li" data-a="${x[2]}" data-id="${x[3]}"><span class="av">${x[1]?ic('check',20):i+1}</span><span class="mid"><div class="nm"${x[1]?' style="color:var(--mute)"':''}>${x[0]}</div></span></button>`).join('')}
+function vHome(){
+  const h=new Date().getHours();const gr=h<5?'לילה טוב':h<12?'בוקר טוב':h<18?'צהריים טובים':'ערב טוב';
+  const op=S.cases.filter(c=>c.status==='open').length,wt=S.cases.filter(c=>c.status==='waiting_instructor').length,nq=S.clients.filter(c=>!S.qmap[c.id]).length;
+  const att=[];
+  S.cases.filter(c=>c.flagged||c.status==='waiting_instructor').slice(0,4).forEach(c=>att.push(liCase(c)));
+  return topMain()+`<div class="page"><h1>${gr} 👋</h1><p class="sub" style="margin:0 0 14px">מה נעשה היום?</p>
+<div class="row" style="margin-bottom:12px"><button class="btn grow" data-a="newcase">${ic('plus',18)} מקרה חדש</button><button class="btn sec grow" data-a="newclient">${ic('plus',18)} לקוחה חדשה</button></div>
+${checklist()}<div class="grid2" style="margin-bottom:6px"><button class="tile" data-a="nav" data-t="clients"><b>${S.clients.length}</b><span>לקוחות</span></button><button class="tile" data-a="nav" data-t="cases" data-f="open"><b>${op}</b><span>מקרים פתוחים</span></button><button class="tile" data-a="nav" data-t="cases" data-f="waiting_instructor"><b>${wt}</b><span>ממתינים למדריכה</span></button><button class="tile" data-a="nav" data-t="clients"><b>${nq}</b><span>חסר שאלון</span></button></div>
+${att.length?`<div class="sec"><span>דורש תשומת לב</span></div>${att.join('')}`:''}
+<div class="sec"><span>מקרים אחרונים</span><button class="btn ghost sm" data-a="nav" data-t="cases" data-f="all">הכול</button></div>${S.cases.slice(0,3).map(liCase).join('')||'<div class="empty">עדיין אין מקרים.</div>'}</div>`}
+function vCases(){const F=[['all','הכול'],['open','פתוחים'],['waiting_instructor','ממתינים'],['answered','נענו'],['closed','סגורים']];
+  return topMain()+`<div class="page"><div class="row sp" style="margin-bottom:8px"><h1>מקרים</h1><button class="iconbtn" data-a="newcase" aria-label="מקרה חדש">${ic('plus')}</button></div><div class="search">${ic('search',18)}<input class="in" id="sq" placeholder="חיפוש לפי שם או שאלה" value="${esc(S.sk)}"></div><div class="fl">${F.map(([k,l])=>`<button class="chk ${S.sf===k?'on':''}" data-a="flt" data-f="${k}">${l}</button>`).join('')}</div><div id="list">${caseList()}</div></div>`}
+function vClients(){return topMain()+`<div class="page"><div class="row sp" style="margin-bottom:8px"><h1>לקוחות</h1><button class="iconbtn" data-a="newclient" aria-label="לקוחה חדשה">${ic('plus')}</button></div><div class="search">${ic('search',18)}<input class="in" id="sq" placeholder="חיפוש לקוחה" value="${esc(S.sc)}"></div><div id="list">${clientList()}</div></div>`}
+function vSettings(){const own=S.role==='owner';
+  return topMain()+`<div class="page"><h1>הגדרות</h1><div class="card" style="margin-top:10px" data-form><h2>הקליניקה</h2><label class="l" style="margin-top:0">שם הקליניקה</label><input class="in" id="sname" value="${esc(S.clinic.name)}"${own?'':' disabled'}>${own?'<div style="margin-top:10px"><button class="btn sm" data-enter data-a="saveclinic">שמירה</button></div>':'<p class="sub">רק בעלת הקליניקה יכולה לשנות שם.</p>'}</div>
+<div class="card"><h2>החשבון</h2><p style="margin:0" dir="ltr">${esc(S.user.email||'')}</p><p class="sub" style="margin:2px 0 12px">${ROLE[S.role]||''}</p><button class="btn ghost" data-a="logout">התנתקות</button></div>
+<div class="card"><h2>על המערכת</h2><p class="sub" style="margin:0">Diapeau Pro · גרסת בדיקות. המערכת מספקת סימוני עזר בלבד ואינה מחליפה שיקול דעת מקצועי. אין להזין מידע של לקוחות אמיתיות עד להשלמת בדיקת פרטיות והסכמות.</p></div></div>`}
+const KIND=[['device','מכשור'],['treatment','טיפולים בקליניקה'],['product','מוצרים לבית']];
+const KIND1={device:'מכשיר',treatment:'טיפול',product:'מוצר'};
+const L_TARGET=[['aging','אנטי־אייג׳ינג'],['scars','צלקות'],['acne','אקנה'],['redness','אדמומיות'],['repair','שיקום העור']];
+const L_LEGACY=[['pigment','פיגמנטציה'],['dry','יובש'],['texture','מרקם ונקבוביות'],['radiance','זוהר וחידוש']];
+const L_TAGS=[['acid','חומצות'],['retinoid','רטינואידים'],['laser','לייזר'],['light','אור / IPL'],['rf','גלי רדיו'],['needling','מיקרונידלינג'],['peel','פילינג'],['ultrasound','אולטרסאונד'],['hydration','הזנה והזרמה']];
+const COMMON_DEV=['לייזר פרקציוני','IPL','RF / מיקרונידלינג RF','HIFU','מיקרונידלינג','דרמה פן','הידרפייס / ניקוי עמוק','LED','אולטרסאונד','קריוטרפיה'];
+const lbl=(arr,v)=>(arr.concat(L_LEGACY).find(x=>x[0]===v)||[0,v])[1];
+function liItem(i){const sb2=[KIND1[i.kind],i.brand,i.price_ils!=null?'₪'+i.price_ils:'',i.duration_min?i.duration_min+' דק׳':''].filter(Boolean).join(' · ');
+  return `<button class="li" data-a="edititem" data-id="${i.id}"><span class="av">${esc(ini(i.name))}</span><span class="mid"><div class="nm">${esc(i.name)}</div><div class="sb">${esc(sb2||(i.target||[]).map(t=>lbl(L_TARGET,t)).join(', ')||KIND1[i.kind])}</div></span><span class="end">${i.safe_in_pregnancy?'<span class="pill">בטוח בהיריון</span>':''}</span></button>`}
+function vClinic(){
+  const cnt=k=>S.items.filter(i=>i.kind===k).length;
+  const seg=`<div class="fl"><button class="chk ${S.cv==='goal'?'on':''}" data-a="cview" data-v="goal">לפי בעיה</button><button class="chk ${S.cv==='kind'?'on':''}" data-a="cview" data-v="kind">לפי סוג</button></div>`;
+  let body='';
+  if(S.cv==='goal'){
+    const keys=L_TARGET.map(x=>x[0]);
+    body=L_TARGET.map(([g,l])=>{const l2=S.items.filter(i=>(i.target||[]).includes(g));return `<div class="sec"><span>${l} (${l2.length})</span><button class="btn ghost sm" data-a="newitem" data-g="${g}">+ הוספה</button></div>${l2.map(liItem).join('')||'<div class="empty" style="padding:10px">אין עדיין פריטים לבעיה הזו.</div>'}`}).join('');
+    const rest=S.items.filter(i=>!(i.target||[]).some(t=>keys.includes(t)));
+    if(rest.length)body+=`<div class="sec"><span>ללא מטרה מוגדרת (${rest.length})</span></div>${rest.map(liItem).join('')}`;
+  }else{
+    body=KIND.map(([k,l])=>{const l2=S.items.filter(i=>i.kind===k);return `<div class="sec"><span>${l} (${l2.length})</span><button class="btn ghost sm" data-a="newitem" data-k="${k}">+ הוספה</button></div>${l2.map(liItem).join('')||'<div class="empty" style="padding:10px">עדיין אין.</div>'}`}).join('');
+  }
+  const quick=S.items.length?'':`<div class="card"><h2>התחלה מהירה</h2><p class="sub" style="margin:0 0 8px">הוסיפי מכשור נפוץ בלחיצה, ואחר כך אפשר לערוך: להוסיף מותג, מחיר ובעיות שהוא מתאים להן.</p><div class="chips">${COMMON_DEV.map(n=>`<button class="chk" data-a="quickdev" data-n="${esc(n)}">+ ${esc(n)}</button>`).join('')}</div></div>`;
+  return topMain()+`<div class="page"><div class="row sp" style="margin-bottom:4px"><h1>הקליניקה שלי</h1><button class="iconbtn" data-a="newitem" aria-label="הוספה">${ic('plus')}</button></div><p class="sub" style="margin:0 0 10px">מה יש בקליניקה: מכשור ${cnt('device')} · טיפולים ${cnt('treatment')} · מוצרים ${cnt('product')}. ההתאמה ללקוחות תיעשה רק מתוך הרשימה הזו. אל תזיני פרוטוקולים של מותגים בלי אישור מהמותג.</p>${S.itemsErr?`<div class="alert">הרשימה לא נטענה: ${esc(S.itemsErr)}</div>`:''}${quick}${seg}${body}</div>`}
+function acc(k,title,body,def){const o=S.open[k]!==undefined?S.open[k]:def;return `<details class="card acc" data-k="${k}"${o?' open':''}><summary>${title}</summary><div class="ab">${body}</div></details>`}
+function flagBox(fl){if(!fl.length)return '';if(fl.length===1)return `<div class="alert">⚑ ${esc(fl[0])}</div>`;const o=S.open.fl;return `<details class="alert" data-k="fl"${o?' open':''}><summary>⚑ ${fl.length} סימוני עזר לתשומת לבך</summary>${fl.map(x=>`<div style="margin-top:6px">${esc(x)}</div>`).join('')}</details>`}
+function vClient(){const c=S.cl,d=S.qmap[c.id]||null;const dd=d||{};const fl=flags(d);const a=ageOf(c.birth_year);
+  const cs=S.cases.filter(x=>x.client_id===c.id);
+  return topSub(esc(c.full_name),`<button class="iconbtn" data-a="editclient" aria-label="עריכה">${ic('edit')}</button>`)+`<div class="page">
+<div class="card"><div class="row" style="gap:14px;flex-wrap:nowrap"><span class="av lg">${esc(ini(c.full_name))}</span><div class="grow"><div style="font-size:18px;font-weight:500">${esc(c.full_name)}</div><div class="sub">${a?'גיל '+a:'גיל לא הוזן'}${c.budget_ils?' · תקציב ₪'+esc(c.budget_ils):''}</div><div class="row" style="margin-top:6px;gap:6px"><span class="pill ${c.consent_photos_at?'':'warn'}">${c.consent_photos_at?'אישרה אחסון תמונות':'ללא אישור צילום'}</span><span class="pill ${c.consent_share_brand_at?'':'warn'}">${c.consent_share_brand_at?'אישרה שיתוף עם מותג':'ללא אישור שיתוף'}</span></div></div></div><div style="margin-top:12px"><button class="btn full" data-a="newcase" data-cl="${c.id}">${ic('plus',18)} מקרה חדש ללקוחה</button></div></div>
+${flagBox(fl)}
+<div class="card"><div class="row sp"><h2 style="margin:0">שאלון בריאות</h2><span class="sub">${qpct(d)}%</span></div><div class="prog"><i style="width:${qpct(d)}%"></i></div><p class="sub" style="margin:6px 0 0">סימוני העזר הם תזכורת בלבד. ההחלטה תמיד של המטפלת.</p></div>
+${acc('q1','עור',`<label class="l" style="margin-top:0">סוג עור לפי פיצפטריק</label><select id="qf">${OPT(L_FITZ,dd.fitz||'')}</select><label class="l">סוג עור</label><select id="qs">${OPT(L_SKIN,dd.skin||'')}</select><label class="l">תחושות בעור</label>${CHK('sens',L_SENS,dd.sens)}`,true)}
+${acc('q2','היסטוריה רפואית',`<label class="l" style="margin-top:0">היריון / הנקה</label><select id="qp">${OPT(L_PREG,dd.preg||'none')}</select><label class="l">שבוע היריון (אם רלוונטי)</label><input class="in" id="qw" type="number" min="0" max="45" value="${esc(dd.pw||'')}"><label class="l">מחלות רקע</label>${CHK('cond',L_COND,dd.cond)}<label class="l">תרופות</label>${CHK('meds',L_MEDS,dd.meds)}<label class="l">אלרגיות (אם אין, רשמי: אין)</label><input class="in" id="qal" value="${esc(dd.allergy||'')}">`,false)}
+${acc('q3','שגרת טיפוח וטיפולים',`<label class="l" style="margin-top:0">אקטיבים בשימוש כיום</label>${CHK('actives',L_ACT,dd.actives)}<label class="l">קרם לחות</label><select id="qm">${OPT(L_MOIST,dd.moist||'')}</select><label class="l">קרם הגנה</label><select id="qspf">${OPT(L_SPF,dd.spf||'')}</select><label class="l">טיפולים ב-3 החודשים האחרונים</label>${CHK('prev',L_PREV,dd.prev)}`,false)}
+${acc('q4','מטרה והערות',`<label class="l" style="margin-top:0">מטרת הלקוחה</label><input class="in" id="qg" value="${esc(dd.goal||'')}"><label class="l">הערות</label><textarea id="qn" rows="3">${esc(dd.notes||'')}</textarea>`,false)}
+<div class="sec"><span>מקרים של ${esc(c.full_name)}</span></div>${cs.map(liCase).join('')||'<div class="empty">אין מקרים עדיין.</div>'}
+<div style="margin:18px 0 12px"><button class="btn dng" data-a="askdelclient">${ic('trash',18)} מחיקת לקוחה</button></div></div>
+<div class="sbar"><button class="btn full" data-a="saveq">שמירת שאלון</button></div>`}
+function photoGrid(){let h='';
+  S.photos.forEach(p=>{h+=`<div class="ps"><img src="${esc(p.url||'')}" data-a="zoom" data-u="${esc(p.url||'')}" alt="תמונה"><span class="tag">${VN[p.view]||''}</span><button class="x" data-a="askdelphoto" data-id="${p.id}" aria-label="מחיקת תמונה">${ic('trash',16)}</button></div>`});
+  Object.keys(VN).forEach(v=>{if(!S.photos.some(p=>p.view===v))h+=`<label class="ps add"><input type="file" accept="image/*" data-view="${v}" hidden>${S.up===v?'<span>מעלה...</span>':ic('camera',26)+'<span>'+VN[v]+'</span>'}</label>`});
+  return h}
+function vCase(){const c=S.cur,cl=S.clients.find(x=>x.id===c.client_id)||{},nm=c.clients?c.clients.full_name:cl.full_name||'';
+  const d=S.qmap[c.client_id]||null;const fl=flags(d);
+  const manage=`<label class="l" style="margin-top:0">סטטוס</label><select id="cstat">${Object.keys(ST).map(k=>`<option value="${k}"${c.status===k?' selected':''}>${ST[k]}</option>`).join('')}</select><div class="chips" style="margin-top:10px"><button class="chk ${c.flagged?'on':''}" data-a="toggleflag">${ic('flag',16)} סימן חריג</button></div><label class="l">הפניה למדריכה</label><div class="row"><button class="btn sec sm" data-a="askroute" data-to="brand">מדריכת מותג</button><button class="btn sec sm" data-a="askroute" data-to="diapeau">מדריכת Diapeau</button></div>${c.routed_to?`<p class="sub" style="margin:8px 0 0">הופנה ל${c.routed_to==='brand'?'מדריכת מותג':'מדריכת Diapeau'} · ${ago(c.routed_at||c.created_at)}</p>`:''}<div style="margin-top:18px"><button class="btn dng" data-a="askdelcase">${ic('trash',18)} מחיקת מקרה</button></div>`;
+  return topSub(esc(nm),pill(c.status))+`<div class="page">
+<div class="steps"><span class="stp ${d?'done':''}">1 · שאלון ${d?'✓':''}</span><span class="stp ${S.photos.length?'done':''}">2 · תמונות ${S.photos.length?'✓':''}</span><span class="stp soon">3 · אבחון</span><span class="stp soon">4 · פרוטוקול</span></div>
+${flagBox(fl)}
+${d?'':`<button class="btn sec sm" data-a="oclient" data-id="${c.client_id}" style="margin-bottom:10px">מילוי שאלון ללקוחה</button>`}
+<div class="card"><h2>תמונות</h2>${cl.consent_photos_at?'':`<div class="alert">אין אישור צילום ללקוחה. <button class="btn sm" style="margin-top:6px" data-a="askconsent">סימון: הלקוחה אישרה</button></div>`}<div class="pg">${photoGrid()}</div></div>
+<div class="card"><h2>שיחה של המקרה</h2><div class="chat" id="chat">${S.msgs.map(m=>m.sender_kind==='system'?`<div class="bb sys">${esc(m.body)}</div>`:`<div class="bb ${m.sender_kind==='therapist'?'me':'oth'}">${esc(m.body)}<small>${hm(m.created_at)}</small></div>`).join('')||'<div class="empty">אין הודעות עדיין. כתבי את השאלה או ההערות שלך.</div>'}</div></div>
+${acc('cm','אפשרויות נוספות: סטטוס, הפניה למדריכה, מחיקה',manage,false)}
+<div style="height:90px"></div></div>
+<div class="cmp"><textarea id="mt" rows="1" placeholder="כתבי הודעה">${esc(S.draft)}</textarea><button class="btn" data-a="send" aria-label="שליחה">${ic('send',20)}</button></div>`}
+function mdl(){const m=S.modal;let b='';
+  if(m.t==='confirm')b=`<h2>${esc(m.title||'אישור')}</h2><p style="margin:0 0 16px">${esc(m.text)}</p><div class="row"><button class="btn ${m.danger?'dng':''} grow" data-a="${m.act}">${esc(m.ok||'אישור')}</button><button class="btn ghost" data-a="mclose">ביטול</button></div>`;
+  else if(m.t==='client'){const e=m.edit||{};b=`<div data-form><h2>${m.edit?'עריכת לקוחה':'לקוחה חדשה'}</h2><label class="l" style="margin-top:0">שם מלא</label><input class="in" id="mn" value="${esc(e.full_name||'')}"><label class="l">שנת לידה</label><input class="in" id="mb" type="number" min="1900" max="2100" value="${esc(e.birth_year||'')}"><label class="l">תקציב בש״ח (ריק = ללא הגבלה)</label><input class="in" id="mbd" type="number" min="0" value="${esc(e.budget_ils||'')}"><div class="chips" style="margin-top:12px;flex-direction:column;align-items:stretch"><label class="chk"><input id="mc1" type="checkbox"${e.consent_photos_at?' checked':''}>הלקוחה אישרה אחסון תמונות</label><label class="chk"><input id="mc2" type="checkbox"${e.consent_share_brand_at?' checked':''}>הלקוחה אישרה שיתוף עם מדריכת מותג</label></div><div class="row" style="margin-top:14px"><button class="btn grow" data-enter data-a="savecl">שמירה</button><button class="btn ghost" data-a="mclose">ביטול</button></div></div>`}
+  else if(m.t==='case'){b=`<div data-form><h2>מקרה חדש</h2>${S.clients.length?`<label class="l" style="margin-top:0">לקוחה</label><select id="mcl">${S.clients.map(c=>`<option value="${c.id}"${m.cl===c.id?' selected':''}>${esc(c.full_name)}</option>`).join('')}</select><label class="l">השאלה / מה מטרידה אותה</label><textarea id="mq" rows="3"></textarea><div class="row" style="margin-top:14px"><button class="btn grow" data-a="savecase">פתיחת מקרה</button><button class="btn ghost" data-a="mclose">ביטול</button></div>`:`<p class="sub">אין עדיין לקוחות. הוסיפי לקוחה קודם.</p><div class="row"><button class="btn grow" data-a="newclient">לקוחה חדשה</button><button class="btn ghost" data-a="mclose">סגירה</button></div>`}</div>`}
+  else if(m.t==='item'){const e=m.edit||{};const k=e.kind||m.k||'treatment';b=`<div data-form><h2>${m.edit?'עריכה':'הוספה'}</h2><label class="l" style="margin-top:0">סוג</label><select id="ik">${KIND.map(([v,l])=>`<option value="${v}"${k===v?' selected':''}>${l}</option>`).join('')}</select><label class="l">שם</label><input class="in" id="inm" value="${esc(e.name||'')}"><label class="l">מותג / יצרן (לא חובה)</label><input class="in" id="ibr" value="${esc(e.brand||'')}"><div class="grid2"><div><label class="l">מחיר בש״ח</label><input class="in" id="ipr" type="number" min="0" value="${esc(e.price_ils!=null?e.price_ils:'')}"></div><div><label class="l">משך בדקות</label><input class="in" id="idu" type="number" min="0" value="${esc(e.duration_min||'')}"></div></div><label class="l">מתאים לטיפול ב</label>${CHK('itarget',L_TARGET,e.target||(m.g?[m.g]:[]))}<label class="l">מאפיינים (לבדיקת שילובים)</label>${CHK('itags',L_TAGS,e.tags)}<div class="chips" style="margin-top:10px"><label class="chk"><input id="ipg" type="checkbox"${e.safe_in_pregnancy?' checked':''}>בטוח בהיריון (לפי הערכת הקליניקה)</label></div><label class="l">הערות</label><textarea id="ino" rows="2">${esc(e.notes||'')}</textarea><div class="row" style="margin-top:14px"><button class="btn grow" data-a="saveitem">שמירה</button><button class="btn ghost" data-a="mclose">ביטול</button></div>${m.edit?`<div style="margin-top:10px"><button class="btn dng sm" data-a="askdelitem">${ic('trash',16)} מחיקה</button></div>`:''}</div>`}
+  else if(m.t==='route'){b=`<h2>הפניה ל${m.to==='brand'?'מדריכת מותג':'מדריכת Diapeau'}</h2><label class="l" style="margin-top:0">סיבה</label><select id="mr">${L_REASON.map(r=>`<option>${r}</option>`).join('')}</select><label class="l">הערה (לא חובה)</label><input class="in" id="mn2"><p class="sub">ההפניה נרשמת בשיחה, והסטטוס עובר ל"ממתין למדריכה".</p><div class="row" style="margin-top:10px"><button class="btn grow" data-a="doroute">הפניה</button><button class="btn ghost" data-a="mclose">ביטול</button></div>`}
+  return `<div class="ov" data-a="mclose"><div class="sheet">${b}</div></div>`}
+function render(){
+  let h;
+  if(S.loading)h='<div class="splash">טוען...</div>';
+  else if(!S.user)h=vAuth();else if(!S.clinic)h=vOnb();
+  else if(S.cur)h=vCase();else if(S.cl)h=vClient();
+  else h=({home:vHome,cases:vCases,clients:vClients,clinic:vClinic,settings:vSettings}[S.nav]||vHome)()+nav();
+  $('app').innerHTML=h;
+  $('modal').innerHTML=S.modal?mdl():'';
+  $('lb').innerHTML=S.lb?`<div class="lb" data-a="unzoom"><img src="${esc(S.lb)}" alt=""></div>`:'';
+  if(S.modal){const f=document.querySelector('#modal input:not([type=checkbox]),#modal textarea');if(f&&!f.value)f.focus()}
+  const sc=S.scroll;S.scroll=false;
+  if(sc==='bottom')window.scrollTo(0,document.body.scrollHeight);else if(sc===true)window.scrollTo(0,0)}
+
+/* ---------- events ---------- */
+document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.tagName==='DETAILS'&&t.dataset.k)S.open[t.dataset.k]=t.open},true);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&(S.modal||S.lb)){S.modal=null;S.lb=null;render();return}
+  if(e.key==='Enter'&&e.target.tagName==='INPUT'&&!['checkbox','file'].includes(e.target.type)){const f=e.target.closest('[data-form]');const b=f&&f.querySelector('[data-enter]');if(b){e.preventDefault();b.click()}}
+  if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='mt'&&window.matchMedia('(pointer:fine)').matches){e.preventDefault();const b=document.querySelector('[data-a="send"]');if(b)b.click()}
+});
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.id==='sq'){if(S.nav==='clients')S.sc=t.value;else S.sk=t.value;$('list').innerHTML=S.nav==='clients'?clientList():caseList()}
+  else if(t.id==='mt'){S.draft=t.value;t.style.height='auto';t.style.height=Math.min(t.scrollHeight,120)+'px'}});
+document.addEventListener('change',async e=>{const t=e.target;
+  if(t.matches&&t.matches('input[type=file][data-view]')){const f=t.files[0],v=t.dataset.view;t.value='';await uploadPhoto(f,v);return}
+  if(t.id==='cstat'&&S.cur){const {error}=await sb.from('cases').update({status:t.value}).eq('id',S.cur.id);if(error){toast(msg(error),'err');t.value=S.cur.status}else{S.cur.status=t.value;toast('הסטטוס עודכן');render()}return}
+  if(t.type==='checkbox'&&t.name){const g=document.querySelectorAll('input[name="'+t.name+'"]');if(t.value==='none'&&t.checked)g.forEach(x=>{if(x!==t)x.checked=false});else if(t.checked)g.forEach(x=>{if(x.value==='none')x.checked=false})}
+});
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a;
+  if(a==='mclose'&&e.target!==t)return;
+  S.errBox='';
+  try{
+    if(a==='mode'){S.mode=S.mode==='login'?'signup':'login'}
+    else if(a==='login'){const {error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});if(error)S.errBox=msg(error);else{S.loading=true;render();return load()}}
+    else if(a==='signup'){const {data,error}=await sb.auth.signUp({email:$('em').value.trim(),password:$('pw').value});if(error)S.errBox=msg(error);else if(!data.session){S.errBox='נשלח מייל לאישור. אחרי האישור, חזרי וכנסי.';S.mode='login'}else{S.loading=true;render();return load()}}
+    else if(a==='logout'){await sb.auth.signOut();Object.assign(S,{user:null,clinic:null,cur:null,cl:null,nav:'home',clients:[],cases:[],items:[],qmap:{},modal:null})}
+    else if(a==='mkclinic'){const n=$('cn').value.trim();if(!n)S.errBox='כתבי שם לקליניקה.';else{const {error}=await sb.rpc('create_clinic',{clinic_name:n});if(error&&!/already in a clinic/.test(msg(error)))S.errBox=msg(error);else{S.loading=true;render();return load()}}}
+    else if(a==='nav'){if(t.dataset.f)S.sf=t.dataset.f;return go(t.dataset.t)}
+    else if(a==='back'){if(S.cur){S.cur=null}else if(S.cl){S.cl=null}else{S.sub=''}S.scroll=true}
+    else if(a==='subitems')return go('clinic')
+    else if(a==='cview'){S.cv=t.dataset.v}
+    else if(a==='flt'){S.sf=t.dataset.f}
+    else if(a==='open')return openCase(t.dataset.id);
+    else if(a==='oclient')return openClient(t.dataset.id);
+    else if(a==='newclient'){S.modal={t:'client',edit:null}}
+    else if(a==='editclient'){S.modal={t:'client',edit:S.cl}}
+    else if(a==='newcase'){S.modal={t:'case',cl:t.dataset.cl||(S.cl?S.cl.id:'')}}
+    else if(a==='mclose'){S.modal=null}
+    else if(a==='zoom'){S.lb=t.dataset.u}
+    else if(a==='unzoom'){S.lb=null}
+    else if(a==='savecl'){
+      const n=$('mn').value.trim();if(!n){toast('כתבי שם.','err');return}
+      const e0=S.modal.edit||{};const now=new Date().toISOString();
+      const row={full_name:n,birth_year:+$('mb').value||null,budget_ils:+$('mbd').value||null,consent_photos_at:$('mc1').checked?(e0.consent_photos_at||now):null,consent_share_brand_at:$('mc2').checked?(e0.consent_share_brand_at||now):null};
+      if(S.modal.edit){const {error}=await sb.from('clients').update(row).eq('id',e0.id);if(error){toast(msg(error),'err');return}Object.assign(S.cl,row);const i=S.clients.findIndex(c=>c.id===e0.id);if(i>=0)Object.assign(S.clients[i],row);S.modal=null;toast('נשמר')}
+      else{const {data,error}=await sb.from('clients').insert(Object.assign({clinic_id:S.clinic.id},row)).select().single();if(error){toast(msg(error),'err');return}S.clients.unshift(data);S.modal=null;S.cur=null;S.cl=data;S.scroll=true;toast('הלקוחה נוספה. אפשר למלא שאלון.')}}
+    else if(a==='saveq'){
+      const g=n=>[...document.querySelectorAll('input[name="'+n+'"]:checked')].map(x=>x.value);const v=id=>$(id).value;
+      const data={fitz:v('qf'),skin:v('qs'),preg:v('qp'),cond:g('cond'),meds:g('meds'),actives:g('actives'),sens:g('sens'),prev:g('prev'),moist:v('qm'),spf:v('qspf'),allergy:v('qal').trim(),goal:v('qg').trim(),notes:v('qn').trim()};
+      const wk=data.preg==='pregnant'?(+v('qw')||0):0;
+      const {error}=await sb.from('questionnaires').upsert({client_id:S.cl.id,clinic_id:S.clinic.id,data:data,pregnancy_week:wk,updated_at:new Date().toISOString()},{onConflict:'client_id'});
+      if(error){toast(msg(error),'err');return}
+      S.qmap[S.cl.id]=Object.assign({},data,{pw:wk});toast('השאלון נשמר ✓')}
+    else if(a==='askdelclient'){S.modal={t:'confirm',title:'מחיקת לקוחה',text:'למחוק את '+S.cl.full_name+'? יימחקו גם השאלון, המקרים והתמונות שלה. אי אפשר לשחזר.',ok:'מחיקה',danger:true,act:'delclient'}}
+    else if(a==='delclient'){const id=S.cl.id;const cs=await sb.from('cases').select('id').eq('client_id',id);const paths=await photoPaths((cs.data||[]).map(x=>x.id));const {error}=await sb.from('clients').delete().eq('id',id);if(error){toast(msg(error),'err');return}await rmFiles(paths);S.modal=null;S.cl=null;await loadAll();S.scroll=true;toast('הלקוחה נמחקה')}
+    else if(a==='askdelcase'){S.modal={t:'confirm',title:'מחיקת מקרה',text:'למחוק את המקרה? יימחקו גם התמונות וההודעות שבו.',ok:'מחיקה',danger:true,act:'delcase'}}
+    else if(a==='delcase'){const paths=await photoPaths([S.cur.id]);const {error}=await sb.from('cases').delete().eq('id',S.cur.id);if(error){toast(msg(error),'err');return}await rmFiles(paths);S.modal=null;S.cur=null;await loadAll();if(S.cl)S.cl=S.clients.find(c=>c.id===S.cl.id)||null;S.scroll=true;toast('המקרה נמחק')}
+    else if(a==='askdelphoto'){S.modal={t:'confirm',title:'מחיקת תמונה',text:'למחוק את התמונה?',ok:'מחיקה',danger:true,act:'delphoto',id:t.dataset.id}}
+    else if(a==='delphoto'){const ph=S.photos.find(x=>x.id===S.modal.id);if(ph){const {error}=await sb.from('case_photos').delete().eq('id',ph.id);if(error){toast(msg(error),'err');return}await rmFiles([ph.storage_path]);S.modal=null;await openCase(S.cur.id,true);toast('התמונה נמחקה');return}S.modal=null}
+    else if(a==='askconsent'){S.modal={t:'confirm',title:'אישור צילום',text:'לסמן שהלקוחה אישרה אחסון תמונות במערכת?',ok:'כן, אישרה',act:'giveconsent'}}
+    else if(a==='giveconsent'){const id=S.cur.client_id;const now=new Date().toISOString();const {error}=await sb.from('clients').update({consent_photos_at:now}).eq('id',id);if(error){toast(msg(error),'err');return}const c=S.clients.find(x=>x.id===id);if(c)c.consent_photos_at=now;S.modal=null;toast('נשמר')}
+    else if(a==='savecase'){
+      const cid=$('mcl').value,q=$('mq').value.trim();
+      const {data,error}=await sb.from('cases').insert({clinic_id:S.clinic.id,client_id:cid,question:q||null,created_by:S.user.id}).select('*,clients(full_name)').single();
+      if(error){toast(msg(error),'err');return}
+      if(q)await sb.from('case_messages').insert({case_id:data.id,clinic_id:S.clinic.id,sender_kind:'therapist',sender_id:S.user.id,body:q});
+      S.cases.unshift(data);S.modal=null;return openCase(data.id)}
+    else if(a==='send'){const b=($('mt').value||'').trim();if(!b)return;const {error}=await sb.from('case_messages').insert({case_id:S.cur.id,clinic_id:S.clinic.id,sender_kind:'therapist',sender_id:S.user.id,body:b});if(error){toast(msg(error),'err');return}S.draft='';await refreshMsgs();S.scroll='bottom'}
+    else if(a==='toggleflag'){const v=!S.cur.flagged;const {error}=await sb.from('cases').update({flagged:v}).eq('id',S.cur.id);if(error){toast(msg(error),'err');return}S.cur.flagged=v;toast(v?'סומן כחריג':'הסימון הוסר')}
+    else if(a==='askroute'){S.modal={t:'route',to:t.dataset.to}}
+    else if(a==='doroute'){
+      const to=S.modal.to,cl=S.clients.find(c=>c.id===S.cur.client_id);
+      if(to==='brand'&&!(cl&&cl.consent_share_brand_at)){toast('אין הסכמה לשיתוף עם מדריכת מותג. סמני אותה בכרטיס הלקוחה.','err');return}
+      const reason=$('mr').value,note=$('mn2').value.trim();const now=new Date().toISOString();
+      const {error}=await sb.from('cases').update({routed_to:to,routed_at:now,status:'waiting_instructor'}).eq('id',S.cur.id);if(error){toast(msg(error),'err');return}
+      Object.assign(S.cur,{routed_to:to,routed_at:now,status:'waiting_instructor'});
+      await sb.from('case_messages').insert({case_id:S.cur.id,clinic_id:S.clinic.id,sender_kind:'system',body:'הופנה ל'+(to==='brand'?'מדריכת המותג':'מדריכת Diapeau')+' · סיבה: '+reason+(note?' · '+note:'')});
+      await refreshMsgs();S.modal=null;S.scroll='bottom';toast('ההפניה נרשמה')}
+    else if(a==='newitem'){S.modal={t:'item',edit:null,k:t.dataset.k||'treatment',g:t.dataset.g||''}}
+    else if(a==='edititem'){S.modal={t:'item',edit:S.items.find(i=>i.id===t.dataset.id)}}
+    else if(a==='quickdev'){const {data,error}=await sb.from('clinic_items').insert({clinic_id:S.clinic.id,kind:'device',name:t.dataset.n}).select().single();if(error){toast(msg(error),'err');return}S.items.push(data);toast('נוסף')}
+    else if(a==='saveitem'){const name=$('inm').value.trim();if(!name){toast('כתבי שם.','err');return}
+      const g=n=>[...document.querySelectorAll('input[name="'+n+'"]:checked')].map(x=>x.value);
+      const row={kind:$('ik').value,name:name,brand:$('ibr').value.trim()||null,price_ils:$('ipr').value===''?null:+$('ipr').value,duration_min:+$('idu').value||null,target:g('itarget'),tags:g('itags'),safe_in_pregnancy:$('ipg').checked,notes:$('ino').value.trim()||null};
+      if(S.modal.edit){const {error}=await sb.from('clinic_items').update(row).eq('id',S.modal.edit.id);if(error){toast(msg(error),'err');return}Object.assign(S.modal.edit,row)}
+      else{const {data,error}=await sb.from('clinic_items').insert(Object.assign({clinic_id:S.clinic.id},row)).select().single();if(error){toast(msg(error),'err');return}S.items.push(data)}
+      S.modal=null;toast('נשמר')}
+    else if(a==='askdelitem'){S.modal={t:'confirm',title:'מחיקה',text:'למחוק את "'+S.modal.edit.name+'" מהרשימה?',ok:'מחיקה',danger:true,act:'delitem',id:S.modal.edit.id}}
+    else if(a==='delitem'){const {error}=await sb.from('clinic_items').delete().eq('id',S.modal.id);if(error){toast(msg(error),'err');return}S.items=S.items.filter(i=>i.id!==S.modal.id);S.modal=null;toast('נמחק')}
+    else if(a==='saveclinic'){const n=$('sname').value.trim();if(!n){toast('כתבי שם.','err');return}const {error}=await sb.from('clinics').update({name:n}).eq('id',S.clinic.id);if(error){toast(msg(error),'err');return}S.clinic.name=n;toast('נשמר')}
+  }catch(x){toast(msg(x),'err');S.up=''}
+  render()});
+sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT'&&S.user){S.user=null;S.clinic=null;render()}});
+render();load();
+</script>
+</body>
+</html>
